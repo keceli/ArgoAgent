@@ -1,17 +1,13 @@
 # ArgoAgent
 
-A command-line interface for interacting with the Argo API, providing a simple way to send prompts and receive responses from various language models.
+A command-line interface for interacting with [Argo](https://argo.anl.gov/). Note that ArgoAgent uses Argo API and you need to be connected to the ANL network to use it.
 
 ## Features
 
-- Send prompts to the Argo API and receive responses
-- Support for multiple language models (GPT-4, GPT-3.5, etc.)
-- Context-aware prompts with file and directory support
-- System prompts for different use cases
-- Token counting and validation
-- Rich terminal output with markdown formatting
-- Progress indicators for API requests
-- Comprehensive logging
+- Send prompts to the Argo API along with the content of a single or multiple files.
+- Modular system prompts for different use cases (see below)
+- Rich terminal output with markdown formatting and progress indicators
+- Detailed logging and automated storing of the interactions
 - Support for various file formats:
   - Text files (txt, csv, json, etc.)
   - PDF documents
@@ -39,10 +35,10 @@ pip install -e .
 argoagent "Your prompt here"
 
 # Using a system prompt
-argoagent "Your prompt here" -s code_review
+argoagent "Your prompt here" -s code_review -c code.py
 
 # Using context from a file
-argoagent "Summarize this" -c path/to/file.txt
+argoagent "Summarize this" -c paper.pdf
 
 # Using context from multiple files
 argoagent "Compare these files" -c file1.txt file2.txt
@@ -51,7 +47,7 @@ argoagent "Compare these files" -c file1.txt file2.txt
 argoagent "Analyze this codebase" -c path/to/directory
 
 # Using wildcard patterns
-argoagent "Find patterns" -c "*.py"
+argoagent "Suggest improvement for the python code" -c "*.py"
 
 # Using a prompt from a file
 argoagent -p prompt.txt
@@ -80,12 +76,26 @@ argoagent "Your prompt here" -v
 
 ## Available System Prompts
 
+ArgoAgent includes a modular system prompts framework that allows for easy extension and customization. Each prompt is stored as a separate markdown file in the `system_prompts` directory, making it easy to edit, version control, and extend.
+
+### Built-in System Prompts
+
 - `code_review`: For reviewing code and suggesting improvements
 - `linux_help`: For getting help with Linux commands
 - `linux_quick`: For quick Linux command suggestions without explanations
 - `debug`: For debugging code issues
 - `doc`: For generating documentation
-- `token_counter`: For counting tokens in text
+- `text_summary`: For summarizing text content
+- `markdown_expert`: For formatting content in markdown
+- `security`: For security analysis and recommendations
+- `performance`: For performance optimization
+- `testing`: For creating test cases
+
+### Adding Custom System Prompts
+
+You can add your own system prompts by creating a new markdown file in the `system_prompts` directory. The file name (without the `.md` extension) will be used as the prompt name.
+
+Example: To add a custom prompt for data analysis, create a file `system_prompts/data_analysis.md` with your prompt content.
 
 ## Environment Variables
 
@@ -144,6 +154,16 @@ argoagent "Debug this error" -c error.log -s debug
 ### Generating Documentation
 ```bash
 argoagent "Generate documentation" -c source.py -s doc
+```
+
+### Performance Optimization
+```bash
+argoagent "Optimize this code" -c algorithm.py -s performance
+```
+
+### Security Analysis
+```bash
+argoagent "Check for security issues" -c web_app.py -s security
 ```
 
 ## License
