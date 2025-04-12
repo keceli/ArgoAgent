@@ -1,0 +1,43 @@
+[project]
+name = "argoagent"
+version = "0.1.0"
+description = "A Python package for interacting with Argo API"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+authors = [
+    {name = "Murat Keceli", email = "keceli@gmail.com"},
+]
+dependencies = [
+    "requests>=2.31.0",
+    "tiktoken>=0.5.2",
+    "rich>=13.7.0",
+    "PyMuPDF>=1.23.8",
+    "python-docx>=1.0.1",
+    "openpyxl>=3.1.2",
+    "python-pptx>=0.6.23",
+    "markdown>=3.5.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.11.5",
+]
+
+[project.scripts]
+argoagent = "argoagent.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/argoagent"
+Repository = "https://github.com/yourusername/argoagent.git"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["argoagent"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
