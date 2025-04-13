@@ -43,6 +43,16 @@ def make_api_request(
     try:
         response = session.post(url, data=payload, headers=headers)
         response.raise_for_status()
+    except requests.exceptions.ConnectionError as e:
+        logger.error(f"Error making POST request: {str(e)}")
+        logger.debug(f"Arguments: url={url}, payload={payload}, headers={headers}")
+        raise ConnectionError(
+            "Failed to connect to Argo API. The Argo API is only available when connected to the Argonne network.\n\n"
+            "To connect to the Argonne network remotely, you can:\n"
+            "1. Use VPN\n"
+            "2. Use sshuttle (see https://help.cels.anl.gov/docs/remote-access/getting-by-without-a-vpn-client/)\n"
+            "3. SSH to a computer at Argonne"
+        ) from e
     except requests.exceptions.RequestException as e:
         logger.error(f"Error making POST request: {str(e)}")
         logger.debug(f"Arguments: url={url}, payload={payload}, headers={headers}")
