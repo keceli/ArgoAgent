@@ -1,0 +1,5 @@
+name: Code Review
+description: Review code for quality, bugs, and improvements
+goal: Analyze the provided code for quality issues, potential bugs, and suggest improvements
+system_prompt: code_review
+user_prompt: "Review the following code and provide specific, actionable feedback on code quality, potential bugs, security issues, and performance optimizations. Focus on the most critical issues first." 

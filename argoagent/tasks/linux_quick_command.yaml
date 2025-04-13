@@ -1,0 +1,5 @@
+name: Linux Quick Command
+description: Get quick Linux command suggestions
+goal: Provide concise Linux command suggestions without explanations
+system_prompt: linux_quick
+user_prompt: "Provide ONLY the command(s) needed to solve the following problem. Be extremely concise - just the command, no explanations." 

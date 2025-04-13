@@ -1,0 +1,5 @@
+name: Debug
+description: Debug code issues
+goal: Identify and fix issues in code
+system_prompt: debug
+user_prompt: "Debug the following code or error message. Identify the root cause, suggest specific fixes, and explain why the issue occurred." 

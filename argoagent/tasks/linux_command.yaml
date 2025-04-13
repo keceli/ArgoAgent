@@ -1,0 +1,5 @@
+name: Linux Command
+description: Get help with Linux commands
+goal: Provide Linux command help and explanations
+system_prompt: linux_help
+user_prompt: "Explain the following Linux command or concept in detail. Include syntax, options, examples, and best practices." 

@@ -6,6 +6,7 @@ A command-line interface for interacting with [Argo](https://argo.anl.gov/). Not
 
 - Send prompts to the Argo API along with the content of a single or multiple files.
 - Modular system prompts for different use cases (see below)
+- Predefined tasks with system prompts and user prompts (see below)
 - Rich terminal output with markdown formatting and progress indicators
 - Detailed logging and automated storing of the interactions
 - Support for various file formats:
@@ -37,6 +38,9 @@ argoagent "Your prompt here"
 # Using a system prompt
 argoagent "Your prompt here" -s code_review -c code.py
 
+# Using a predefined task
+argoagent -t code_review -c code.py
+
 # Using context from a file
 argoagent "Summarize this" -c paper.pdf
 
@@ -65,10 +69,11 @@ argoagent "Your prompt here" -v
 - `-p, --prompt_file`: Path to a file containing the prompt
 - `-c, --context`: Path(s) to file(s), directory(ies), or wildcard pattern(s) containing context
 - `-s, --system`: System prompt to use (see available options below)
+- `-t, --task`: Task to use (see available options below)
 - `-u, --argo_url`: ARGO API endpoint URL
 - `-a, --argo_user`: User for the Argo API request
 - `-m, --model`: Model to use for the prompt
-- `-t, --temperature`: Sampling temperature (0-2)
+- `-temp, --temperature`: Sampling temperature (0-2)
 - `-o, --top_p`: Top-p sampling (0-1)
 - `-x, --max_tokens`: Maximum number of tokens in the response
 - `-n, --number_of_tokens`: Only count and display the number of tokens
@@ -97,6 +102,31 @@ You can add your own system prompts by creating a new markdown file in the `syst
 
 Example: To add a custom prompt for data analysis, create a file `system_prompts/data_analysis.md` with your prompt content.
 
+## Available Tasks
+
+ArgoAgent includes a task framework that combines system prompts with predefined user prompts. Each task is stored as a YAML file in the `tasks` directory.
+
+### Built-in Tasks
+
+- `code_review`: Review code for quality, bugs, and improvements
+- `documentation`: Generate documentation for code
+- `linux_command`: Get help with Linux commands
+- `linux_quick_command`: Get quick Linux command suggestions
+- `debug`: Debug code issues
+
+### Adding Custom Tasks
+
+You can add your own tasks by creating a new YAML file in the `tasks` directory. The file name (without the `.yaml` extension) will be used as the task name.
+
+Example task file (`tasks/custom_task.yaml`):
+```yaml
+name: Custom Task
+description: Description of the task
+goal: The goal of the task
+system_prompt: system_prompt_name
+user_prompt: "The user prompt to use for this task"
+```
+
 ## Environment Variables
 
 You can set these environment variables to avoid specifying them in every command:
@@ -116,6 +146,7 @@ export ARGO_USER="your_username"
 - openpyxl>=3.1.2 (for Excel handling)
 - python-pptx>=0.6.23 (for PowerPoint handling)
 - markdown>=3.5.1 (for Markdown handling)
+- PyYAML>=6.0.1 (for task configuration)
 
 ### Development Dependencies
 - pytest>=7.4.3
@@ -129,11 +160,15 @@ export ARGO_USER="your_username"
 ### Code Review
 ```bash
 argoagent "Review this code" -c path/to/code.py -s code_review
+# Or using the task
+argoagent -t code_review -c path/to/code.py
 ```
 
 ### Linux Command Help
 ```bash
 argoagent "How do I find all files modified in the last 7 days?" -s linux_quick
+# Or using the task
+argoagent -t linux_quick_command "How do I find all files modified in the last 7 days?"
 ```
 
 ### Document Analysis
@@ -149,11 +184,15 @@ argoagent "Compare these files" -c "*.py"
 ### Debugging Code
 ```bash
 argoagent "Debug this error" -c error.log -s debug
+# Or using the task
+argoagent -t debug -c error.log
 ```
 
 ### Generating Documentation
 ```bash
 argoagent "Generate documentation" -c source.py -s doc
+# Or using the task
+argoagent -t documentation -c source.py
 ```
 
 ### Performance Optimization

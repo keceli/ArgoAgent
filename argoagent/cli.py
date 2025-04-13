@@ -6,7 +6,8 @@ import json
 import logging
 import os
 import sys
-from typing import Dict, List, Optional, Tuple
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Union
 
 from rich.console import Console
 from rich.markdown import Markdown
@@ -22,6 +23,7 @@ from .system_prompts import (
     list_available_prompts,
     format_prompt_list,
 )
+from .tasks import get_task, list_available_tasks, format_task_list
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -181,12 +183,17 @@ def print_response(
     prompt: str,
     token_count: Optional[int] = None,
     system_prompt_name: Optional[str] = None,
+    task_name: Optional[str] = None,
 ) -> None:
     """Print the response with model and prompt information."""
     # Create a header with model and prompt information
     header = Text()
     header.append("Model: ", style="bold blue")
     header.append(model, style="bold green")
+
+    if task_name:
+        header.append("\nTask: ", style="bold blue")
+        header.append(task_name, style="bold magenta")
 
     if system_prompt_name:
         header.append("\nSystem Prompt: ", style="bold blue")
@@ -216,7 +223,7 @@ def main() -> None:
     )
 
     # Create mutually exclusive group for prompt input
-    prompt_group = parser.add_mutually_exclusive_group(required=True)
+    prompt_group = parser.add_mutually_exclusive_group(required=False)
     prompt_group.add_argument(
         "prompt",
         nargs="?",  # Make positional argument optional
@@ -234,12 +241,22 @@ def main() -> None:
         nargs="+",
         help="Path(s) to file(s), directory(ies), or wildcard pattern(s) containing context to be included in the prompt.",
     )
-    parser.add_argument(
+
+    # Create mutually exclusive group for system prompt and task
+    system_task_group = parser.add_mutually_exclusive_group()
+    system_task_group.add_argument(
         "-s",
         "--system",
         choices=list_available_prompts(),
         help="System prompt to use. Available options:\n" + format_prompt_list(),
     )
+    system_task_group.add_argument(
+        "-t",
+        "--task",
+        choices=list_available_tasks(),
+        help="Task to use. Available options:\n" + format_task_list(),
+    )
+
     parser.add_argument(
         "-u",
         "--argo_url",
@@ -259,7 +276,7 @@ def main() -> None:
         help="Model to use for the prompt." + get_model_help_text(),
     )
     parser.add_argument(
-        "-t",
+        "-temp",
         "--temperature",
         type=float,
         default=0.7,
@@ -299,6 +316,19 @@ def main() -> None:
         logging.getLogger().setLevel(logging.DEBUG)
         logger.debug("Verbose logging enabled")
 
+    # Handle task if specified
+    task = None
+    if args.task:
+        task = get_task(args.task)
+        if not task:
+            logger.error(f"Task '{args.task}' not found")
+            return
+        logger.info(f"Using task: {task.name} - {task.description}")
+        logger.info(f"Task goal: {task.goal}")
+    elif not args.prompt and not args.prompt_file:
+        # If no task is specified and no prompt is provided, show error
+        parser.error("Either a task (-t/--task) or a prompt must be provided")
+
     # Handle prompt file if provided
     if args.prompt_file:
         prompt_text = read_file_content(args.prompt_file)
@@ -307,10 +337,18 @@ def main() -> None:
     else:
         prompt_text = args.prompt
 
-    # Get system prompt if specified
+    # Get system prompt if specified or from task
     system_prompt = None
-    if args.system:
+    system_prompt_name = None
+    if task:
+        system_prompt = get_system_prompt(task.system_prompt)
+        system_prompt_name = task.system_prompt
+        # Use the task's user prompt if no additional prompt is provided
+        if not prompt_text:
+            prompt_text = task.user_prompt
+    elif args.system:
         system_prompt = get_system_prompt(args.system)
+        system_prompt_name = args.system
         if not system_prompt:
             logger.error(f"Invalid system prompt: {args.system}")
             return
@@ -348,7 +386,7 @@ def main() -> None:
         console=console,
         transient=True,
     ) as progress:
-        progress.add_task("", total=None)
+        task = progress.add_task("", total=None)
         response = ask_llm(
             prompt=formatted_prompt,
             model=args.model,
@@ -360,7 +398,10 @@ def main() -> None:
         )
 
     # Print the response with model and prompt information
-    print_response(response, args.model, prompt_text, token_count, args.system)
+    task_name = args.task if args.task else None
+    print_response(
+        response, args.model, prompt_text, token_count, system_prompt_name, task_name
+    )
 
 
 if __name__ == "__main__":

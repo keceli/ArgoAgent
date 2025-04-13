@@ -1,0 +1,5 @@
+name: Documentation
+description: Generate documentation for code
+goal: Create comprehensive documentation for the provided code
+system_prompt: doc
+user_prompt: "Generate comprehensive documentation for the following code. Include an overview, installation instructions, usage examples, API reference, configuration options, and troubleshooting tips." 
