@@ -20,24 +20,26 @@ class Task:
         self,
         name: str,
         description: str,
-        goal: str,
         system_prompt: str,
         user_prompt: str,
     ):
         """Initialize a task with its configuration."""
         self.name = name
         self.description = description
-        self.goal = goal
         self.system_prompt = system_prompt
         self.user_prompt = user_prompt
 
     @classmethod
-    def from_dict(cls, data: Dict) -> "Task":
-        """Create a Task instance from a dictionary."""
+    def from_dict(cls, data: Dict, default_name: str = "") -> "Task":
+        """Create a Task instance from a dictionary.
+
+        Args:
+            data: Dictionary containing task configuration
+            default_name: Default name to use if not specified in data
+        """
         return cls(
-            name=data.get("name", ""),
-            description=data.get("description", ""),
-            goal=data.get("goal", ""),
+            name=data.get("name", default_name),
+            description=data.get("description", f"Task loaded from {default_name}"),
             system_prompt=data.get("system_prompt", ""),
             user_prompt=data.get("user_prompt", ""),
         )
@@ -51,7 +53,13 @@ def load_tasks() -> Dict[str, Task]:
             task_name = file.stem  # Use the file name (without extension) as the key
             with file.open("r", encoding="utf-8") as f:
                 task_data = yaml.safe_load(f)
-                tasks[task_name] = Task.from_dict(task_data)
+                if task_data is None:  # Handle empty YAML files
+                    task_data = {}
+                # Pass the file name as default_name
+                task = Task.from_dict(task_data, default_name=task_name)
+                # Use the task's name if it was specified in YAML, otherwise use file name
+                tasks[task.name or task_name] = task
+            logger.debug(f"Loaded task '{task.name or task_name}' from {file}")
         logger.info(f"Loaded {len(tasks)} tasks from {TASKS_DIR}")
     except Exception as e:
         logger.error(f"Error loading tasks: {str(e)}")

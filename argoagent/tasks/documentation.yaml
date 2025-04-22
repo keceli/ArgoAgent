@@ -1,5 +1,4 @@
 name: Documentation
-description: Generate documentation for code
-goal: Create comprehensive documentation for the provided code
+description: Generate clear and comprehensive documentation for code, including usage examples and explanations
 system_prompt: doc
-user_prompt: "Generate comprehensive documentation for the following code. Include an overview, installation instructions, usage examples, API reference, configuration options, and troubleshooting tips." 
+user_prompt: "Please generate documentation for this code. Include a clear description of its purpose, usage examples, and explanations of key components and functionality." 
