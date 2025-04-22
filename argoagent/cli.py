@@ -61,6 +61,9 @@ def handle_wildcard_pattern(
                     file_tokens = count_tokens(content)
                     if file_tokens is not None:
                         total_tokens += file_tokens
+                        console.print(
+                            f"[blue]Reading[/blue] {file_path} ([cyan]{file_tokens}[/cyan] tokens)"
+                        )
                         if total_tokens > max_tokens:
                             raise TokenLimitExceededError(
                                 f"Total tokens ({total_tokens}) exceed max_tokens ({max_tokens})"
@@ -91,6 +94,9 @@ def handle_directory(
                         file_tokens = count_tokens(content)
                         if file_tokens is not None:
                             total_tokens += file_tokens
+                            console.print(
+                                f"[blue]Reading[/blue] {file_path} ([cyan]{file_tokens}[/cyan] tokens)"
+                            )
                             if total_tokens > max_tokens:
                                 raise TokenLimitExceededError(
                                     f"Total tokens ({total_tokens}) exceed max_tokens ({max_tokens})"
@@ -114,6 +120,9 @@ def handle_single_file(
             file_tokens = count_tokens(content)
             if file_tokens is not None:
                 total_tokens += file_tokens
+                console.print(
+                    f"[blue]Reading[/blue] {path} ([cyan]{file_tokens}[/cyan] tokens)"
+                )
                 if total_tokens > max_tokens:
                     raise TokenLimitExceededError(
                         f"Total tokens ({total_tokens}) exceed max_tokens ({max_tokens})"
@@ -128,6 +137,8 @@ def get_context_from_paths(
     """Get context from file paths, directories, or wildcard patterns."""
     context_data: Dict[str, str] = {}
     total_tokens = 0
+
+    console.print("\n[bold blue]Reading context files:[/bold blue]")
 
     for path in paths:
         try:
@@ -153,6 +164,11 @@ def get_context_from_paths(
         except TokenLimitExceededError as e:
             logger.error(str(e))
             sys.exit(1)
+
+    if total_tokens > 0:
+        console.print(
+            f"\n[bold blue]Total tokens from context:[/bold blue] [cyan]{total_tokens}[/cyan]\n"
+        )
 
     # Convert to JSON format
     return json.dumps(context_data, indent=2), total_tokens
@@ -279,7 +295,6 @@ def main() -> None:
     )
 
     parser.add_argument(
-        "-u",
         "--argo_url",
         default=os.getenv("ARGO_URL"),
         help="ARGO API endpoint URL.",
@@ -300,7 +315,7 @@ def main() -> None:
         "-temp",
         "--temperature",
         type=float,
-        default=0.7,
+        default=0.0,
         help="Sampling temperature (0-2). Higher values mean more creative output. Not supported by some models.",
     )
     parser.add_argument(
@@ -348,7 +363,7 @@ def main() -> None:
             logger.error(f"Task '{args.task}' not found")
             return
         logger.info(f"Using task: {task.name} - {task.description}")
-        logger.info(f"Task goal: {task.goal}")
+        logger.info(f"Task description: {task.description}")
     elif not args.prompt and not args.prompt_file:
         # If no task is specified and no prompt is provided, show error
         parser.error("Either a task (-t/--task) or a prompt must be provided")
