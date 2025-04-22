@@ -27,6 +27,10 @@ pip install -e ".[dev]"
 
 # Install with only required dependencies
 pip install -e .
+
+# Enable tab completion for bash
+eval "$(register-python-argcomplete argoagent)"
+# Add the above line to your ~/.bashrc to make it permanent
 ```
 
 ## Usage
@@ -61,6 +65,20 @@ argoagent "Your prompt here" -n
 
 # Using verbose logging
 argoagent "Your prompt here" -v
+```
+
+## Tab Completion
+
+ArgoAgent includes tab completion for command-line arguments, making it easier to use:
+
+- Press TAB to complete file paths for the `-c/--context` option
+- Press TAB to see available system prompts for the `-s/--system` option
+- Press TAB to see available tasks for the `-t/--task` option
+
+To enable tab completion permanently, add the following line to your `~/.bashrc` file:
+
+```bash
+eval "$(register-python-argcomplete argoagent)"
 ```
 
 ## Command-line Options
@@ -113,6 +131,7 @@ ArgoAgent includes a task framework that combines system prompts with predefined
 - `linux_command`: Get help with Linux commands
 - `linux_quick_command`: Get quick Linux command suggestions
 - `debug`: Debug code issues
+- `document_summary`: Summarize the content of a document
 
 ### Adding Custom Tasks
 
@@ -139,21 +158,24 @@ export ARGO_USER="your_username"
 ## Dependencies
 
 ### Required Dependencies
-- requests>=2.31.0
-- rich>=13.7.0
+- requests>=2.31.0 (for API requests)
+- tiktoken>=0.5.2 (for token counting)
+- rich>=13.7.0 (for terminal formatting)
 - PyMuPDF>=1.23.8 (for PDF handling)
 - python-docx>=1.0.1 (for DOCX handling)
 - openpyxl>=3.1.2 (for Excel handling)
 - python-pptx>=0.6.23 (for PowerPoint handling)
 - markdown>=3.5.1 (for Markdown handling)
 - PyYAML>=6.0.1 (for task configuration)
+- argcomplete>=3.2.2 (for tab completion)
 
 ### Development Dependencies
-- pytest>=7.4.3
-- black>=23.11.0
-- isort>=5.12.0
-- mypy>=1.7.1
-- pylint>=3.0.2
+- ruff>=0.11.5 (for linting and formatting)
+- pytest>=7.4.3 (for testing)
+- black>=23.11.0 (for code formatting)
+- isort>=5.12.0 (for import sorting)
+- mypy>=1.7.1 (for type checking)
+- pylint>=3.0.2 (for code analysis)
 
 ## Examples
 
@@ -174,6 +196,8 @@ argoagent -t linux_quick_command "How do I find all files modified in the last 7
 ### Document Analysis
 ```bash
 argoagent "Summarize this document" -c document.pdf
+# Or using the task
+argoagent -t document_summary -c document.pdf
 ```
 
 ### Multiple File Analysis

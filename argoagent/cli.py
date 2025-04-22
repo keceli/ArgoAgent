@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
+import argcomplete
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
@@ -215,6 +216,26 @@ def print_response(
     console.print(Markdown(response))
 
 
+def file_completer(prefix, parsed_args, **kwargs):
+    """Complete file paths for the context argument."""
+    if not prefix:
+        prefix = "."
+
+    # Handle directory completion
+    if os.path.isdir(prefix):
+        return [os.path.join(prefix, f) for f in os.listdir(prefix)]
+
+    # Handle file completion
+    directory = os.path.dirname(prefix) or "."
+    base = os.path.basename(prefix)
+
+    try:
+        files = os.listdir(directory)
+        return [os.path.join(directory, f) for f in files if f.startswith(base)]
+    except (OSError, PermissionError):
+        return []
+
+
 def main() -> None:
     """Main entry point for the CLI."""
     parser = argparse.ArgumentParser(
@@ -240,7 +261,7 @@ def main() -> None:
         "--context",
         nargs="+",
         help="Path(s) to file(s), directory(ies), or wildcard pattern(s) containing context to be included in the prompt.",
-    )
+    ).completer = file_completer
 
     # Create mutually exclusive group for system prompt and task
     system_task_group = parser.add_mutually_exclusive_group()
@@ -308,6 +329,9 @@ def main() -> None:
         action="store_true",
         help="Enable verbose logging.",
     )
+
+    # Set up argument completion
+    argcomplete.autocomplete(parser)
 
     args = parser.parse_args()
 
