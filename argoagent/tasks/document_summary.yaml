@@ -1,4 +1,3 @@
-name: Document Summary
 description: Create a concise summary of the provided document, extracting main points, key findings, and important conclusions
 system_prompt: text_summary
 user_prompt: "Please provide a comprehensive summary of the following document. Include the main points, key findings, and any important conclusions. If the document is technical, explain the technical concepts in accessible language." 

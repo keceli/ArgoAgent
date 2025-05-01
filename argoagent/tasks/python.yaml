@@ -1,0 +1,3 @@
+description: Generate Python code based on the user's request.
+system_prompt: python
+user_prompt: "Please generate Python code for the following task:" 

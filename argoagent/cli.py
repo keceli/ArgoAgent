@@ -6,6 +6,7 @@ import json
 import logging
 import os
 import sys
+import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -194,6 +195,14 @@ def format_prompt_with_context(
     return formatted_prompt
 
 
+def clean_response(response: str) -> str:
+    """Clean the response to remove any syntax highlighting."""
+    lines = response.splitlines()
+    if lines[0].startswith("```") and lines[-1].startswith("```"):
+        response = "\n".join(lines[1:-1])
+    return response
+
+
 def print_response(
     response: str,
     model: str,
@@ -230,6 +239,31 @@ def print_response(
 
     # Print the response as markdown
     console.print(Markdown(response))
+
+    # Save output for specific tasks
+    if task_name in ["latex", "html", "python"]:
+        task_extension_map = {
+            "latex": ".tex",
+            "html": ".html",
+            "python": ".py",
+        }
+        extension = task_extension_map.get(task_name)
+        if extension:
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"output_{timestamp}{extension}"
+            try:
+                output_path = Path(filename)  # Save in current directory
+                with output_path.open("w", encoding="utf-8") as f:
+                    f.write(clean_response(response))
+                console.print(
+                    f"[bold green]Output saved to:[/bold green] {output_path.resolve()}"
+                )
+                logger.info(f"Saved {task_name} output to {filename}")
+            except Exception as e:
+                logger.error(f"Error saving output file {filename}: {str(e)}")
+                console.print(
+                    f"[bold red]Error saving output file:[/bold red] {filename}\n{str(e)}"
+                )
 
 
 def file_completer(prefix, parsed_args, **kwargs):

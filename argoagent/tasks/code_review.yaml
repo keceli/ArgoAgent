@@ -1,4 +1,3 @@
-name: Code Review
 description: Review code for quality, bugs, and potential improvements, providing specific recommendations and best practices
 system_prompt: code_review
 user_prompt: "Please review this code and provide feedback on its quality, potential bugs, and areas for improvement. Include specific recommendations and explain any suggested changes." 

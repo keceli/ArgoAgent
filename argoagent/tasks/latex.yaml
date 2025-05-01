@@ -1,0 +1,3 @@
+description: Generate valid LaTeX markup based on the user's request.
+system_prompt: latex
+user_prompt: "Please generate LaTeX code for the following description:" 

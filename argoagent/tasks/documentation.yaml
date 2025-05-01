@@ -1,4 +1,3 @@
-name: Documentation
 description: Generate clear and comprehensive documentation for code, including usage examples and explanations
 system_prompt: doc
 user_prompt: "Please generate documentation for this code. Include a clear description of its purpose, usage examples, and explanations of key components and functionality." 

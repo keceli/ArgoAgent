@@ -1,0 +1,3 @@
+description: Generate valid HTML markup based on the user's request.
+system_prompt: html
+user_prompt: "Please generate HTML code for the following description:" 
