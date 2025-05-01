@@ -1,0 +1,3 @@
+description: Edit the provided text to improve grammar, flow, clarity, and conciseness.
+system_prompt: edit
+user_prompt: "Please edit the following text to improve its grammar, flow, clarity, and conciseness:" 
