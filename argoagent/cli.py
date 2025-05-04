@@ -241,11 +241,12 @@ def print_response(
     console.print(Markdown(response))
 
     # Save output for specific tasks
-    if task_name in ["latex", "html", "python"]:
+    if task_name in ["latex", "html", "python", "markdown"]:
         task_extension_map = {
             "latex": ".tex",
             "html": ".html",
             "python": ".py",
+            "markdown": ".md",
         }
         extension = task_extension_map.get(task_name)
         if extension:
@@ -353,7 +354,6 @@ def main() -> None:
         help="Sampling temperature (0-2). Higher values mean more creative output. Not supported by some models.",
     )
     parser.add_argument(
-        "-o",
         "--top_p",
         type=float,
         default=0.9,
