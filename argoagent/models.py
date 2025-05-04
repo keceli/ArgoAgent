@@ -11,6 +11,7 @@ VALID_MODELS = {
     "gpto1preview": {"max_tokens": 16384, "supports_standard_params": False},
     "gpto1mini": {"max_tokens": 65536, "supports_standard_params": False},
     "gpto3mini": {"max_tokens": 100000, "supports_standard_params": False},
+    "gpto1": {"max_tokens": 200000, "supports_standard_params": False},
 }
 
 
