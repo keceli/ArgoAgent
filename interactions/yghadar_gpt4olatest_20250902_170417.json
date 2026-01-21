@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-09-02T17:04:17.275105",
+  "request": {
+    "prompt": "what LLM are you using?",
+    "model": "gpt4olatest",
+    "parameters": {
+      "temperature": 0.0,
+      "top_p": 0.9,
+      "max_tokens": 16384,
+      "max_completion_tokens": null
+    },
+    "system": "You are a helpful AI assistant."
+  },
+  "response": {
+    "content": "I am powered by OpenAI's GPT-4 model, which is a large language model (LLM) designed to assist with a wide range of tasks, including answering questions, providing explanations, and generating text. Let me know how I can help!",
+    "time_taken": 1.2144179344177246
+  }
+}
